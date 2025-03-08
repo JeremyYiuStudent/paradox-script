@@ -29,7 +29,7 @@ const AboutSection = () => {
                 <div className="ml-4">
                   <h4 className="text-lg font-medium">Our Mission</h4>
                   <p className="mt-1 text-gray-600 dark:text-gray-400">
-                    To democratize interactive storytelling and empower writers to create engaging multiplayer narratives without code.
+                    Empower anyone, with or without writing experience, to become a creator of interactive fiction.
                   </p>
                 </div>
               </div>
@@ -41,7 +41,7 @@ const AboutSection = () => {
                 <div className="ml-4">
                   <h4 className="text-lg font-medium">Our Approach</h4>
                   <p className="mt-1 text-gray-600 dark:text-gray-400">
-                    We handle the technical complexities so you can focus on what matters most: your creative vision.
+                    We create an innovative new platform for players to create and play multiplayer role-playing mystery experiences.  
                   </p>
                 </div>
               </div>
