@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BookOpenText, Twitter, Instagram, Github, Linkedin } from 'lucide-react';
+import { Twitter, Instagram, Github, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -12,10 +12,11 @@ const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="flex items-center mb-6">
-              <BookOpenText className="h-6 w-6 text-blue-600 mr-2" />
-              <span className="font-mono text-xl font-bold tracking-tight">
-                Paradox<span className="text-blue-600">Script</span>
-              </span>
+              <img 
+                src="/lovable-uploads/dee94213-24b2-4618-af5b-6bc2c7f9b2f8.png" 
+                alt="Paradox Script Logo" 
+                className="h-12 mr-3"
+              />
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md">
               Empowering writers to create interactive multiplayer narratives without code.

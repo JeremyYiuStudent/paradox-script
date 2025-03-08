@@ -45,9 +45,11 @@ const Navbar = () => {
           className="relative z-10 flex items-center"
           onClick={closeMenu}
         >
-          <span className="font-mono text-xl font-bold tracking-tight">
-            Paradox<span className="text-blue-600">Script</span>
-          </span>
+          <img 
+            src="/lovable-uploads/dee94213-24b2-4618-af5b-6bc2c7f9b2f8.png" 
+            alt="Paradox Script Logo" 
+            className="h-10 mr-3"
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -86,6 +88,13 @@ const Navbar = () => {
         )}
       >
         <ScrollArea className="h-full w-full p-6 pt-20">
+          <div className="flex justify-center mb-8">
+            <img 
+              src="/lovable-uploads/dee94213-24b2-4618-af5b-6bc2c7f9b2f8.png" 
+              alt="Paradox Script Logo" 
+              className="h-16"
+            />
+          </div>
           <nav className="flex flex-col space-y-8">
             {links.map((link) => (
               <a
