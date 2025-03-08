@@ -32,14 +32,6 @@ const HeroSection = () => {
       <div className="relative w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         {/* Content */}
         <div className="order-2 lg:order-1 animate-fade-in">
-          <div className="flex justify-start mb-8">
-            <img 
-              src="/lovable-uploads/dee94213-24b2-4618-af5b-6bc2c7f9b2f8.png" 
-              alt="Paradox Script Logo" 
-              className="h-20 mb-4"
-            />
-          </div>
-
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-xs font-medium tracking-wide mb-6">
             <span className="animate-pulse mr-2 h-2 w-2 rounded-full bg-blue-600"></span>
             Now accepting early access writers
