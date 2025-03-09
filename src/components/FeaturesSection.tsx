@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Blocks, Code2, Sparkles, Lightbulb, Moon, Gamepad, BookText, Zap, Users, PencilRuler } from 'lucide-react';
 import { motion } from 'framer-motion';
