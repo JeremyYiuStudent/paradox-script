@@ -25,11 +25,6 @@ const features = [
     description: "Access a suite of tools designed for creative storytelling."
   },
   {
-    icon: <Moon className="h-6 w-6 text-blue-600" />,
-    title: "Dark Mode",
-    description: "Enjoy a comfortable reading experience with dark mode."
-  },
-  {
     icon: <Gamepad className="h-6 w-6 text-blue-600" />,
     title: "Interactive Gameplay",
     description: "Engage players with interactive gameplay elements."
