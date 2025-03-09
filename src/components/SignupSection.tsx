@@ -126,7 +126,7 @@ const SignupSection = () => {
             <div className="flex flex-col items-center">
               <div className="bg-white p-4 rounded-xl mb-4 shadow-md">
                 <img 
-                  src="/lovable-uploads/18b095b2-82a2-4364-8c0b-c95514f81c8d.png" 
+                  src="/lovable-uploads/cca55cc7-d550-412f-a671-1bb0a9de5615.png" 
                   alt="Discord Community QR Code" 
                   className="w-48 h-48 object-contain"
                 />
