@@ -47,16 +47,6 @@ const HeroSection = () => {
             Just write your story, and we'll handle the rest.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 mb-12">
-            <Button size="lg" className="group">
-              Start Creating
-              <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-            <Button size="lg" variant="outline">
-              Learn More
-            </Button>
-          </div>
-          
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
               { 
