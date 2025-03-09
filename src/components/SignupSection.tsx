@@ -134,7 +134,7 @@ const SignupSection = () => {
               <p className="text-sm text-center text-gray-600 dark:text-gray-400">
                 Scan this QR code with your mobile device to join our Discord server
               </p>
-              <Button variant="outline" className="mt-4 group" onClick={() => window.open("https://discord.gg/paradoxscript", "_blank")}>
+              <Button variant="outline" className="mt-4 group" onClick={() => window.open("https://discord.gg/Enz3yTGFZu", "_blank")}>
                 Open Discord Invite
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
