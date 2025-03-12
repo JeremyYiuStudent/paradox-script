@@ -50,6 +50,9 @@ const Navbar = () => {
             alt="Paradox Script Logo" 
             className="h-10 mr-3"
           />
+          <span className="text-xl font-semibold text-gray-900 dark:text-white">
+            Paradox Script
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
