@@ -44,12 +44,8 @@ const Footer = () => {
           {/* Links */}
           {[
             {
-              title: "Product",
-              links: ["Features", "How It Works", "Pricing", "Use Cases", "Roadmap"]
-            },
-            {
               title: "Company",
-              links: ["About Us", "Careers", "Blog", "Press", "Contact"]
+              links: ["About Us", "Contact"]
             }
           ].map((category, i) => (
             <div key={i}>
