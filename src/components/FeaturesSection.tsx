@@ -53,7 +53,7 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8">
+    <section id="features" className="py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto text-center mb-12">
         <h2 className="text-3xl font-bold mb-6">Features</h2>
         <p className="text-lg text-gray-600 dark:text-gray-400">
