@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Twitter, Instagram, Github, Linkedin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -24,14 +25,16 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               {[
-                { icon: <Twitter className="h-5 w-5" />, label: "Twitter" },
-                { icon: <Instagram className="h-5 w-5" />, label: "Instagram" },
-                { icon: <Github className="h-5 w-5" />, label: "GitHub" },
-                { icon: <Linkedin className="h-5 w-5" />, label: "LinkedIn" }
+                { icon: <Twitter className="h-5 w-5" />, label: "Twitter", url: "https://twitter.com" },
+                { icon: <Instagram className="h-5 w-5" />, label: "Instagram", url: "https://instagram.com" },
+                { icon: <Github className="h-5 w-5" />, label: "GitHub", url: "https://github.com" },
+                { icon: <Linkedin className="h-5 w-5" />, label: "LinkedIn", url: "https://linkedin.com" }
               ].map((social, i) => (
                 <a
                   key={i}
-                  href="#"
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="h-10 w-10 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   aria-label={social.label}
                 >
@@ -45,7 +48,19 @@ const Footer = () => {
           {[
             {
               title: "Company",
-              links: ["About Us", "Contact"]
+              links: [
+                { name: "About Us", path: "/about" },
+                { name: "Contact", path: "/contact" }
+              ]
+            },
+            {
+              title: "Legal",
+              links: [
+                { name: "Terms", path: "/terms" },
+                { name: "Privacy", path: "/privacy" },
+                { name: "Cookies", path: "/cookies" },
+                { name: "FAQ", path: "/faq" }
+              ]
             }
           ].map((category, i) => (
             <div key={i}>
@@ -53,12 +68,12 @@ const Footer = () => {
               <ul className="space-y-3">
                 {category.links.map((link, j) => (
                   <li key={j}>
-                    <a 
-                      href="#" 
+                    <Link
+                      to={link.path}
                       className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                     >
-                      {link}
-                    </a>
+                      {link.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -72,14 +87,19 @@ const Footer = () => {
           </p>
           
           <div className="mt-4 md:mt-0 flex flex-wrap justify-center gap-x-8 gap-y-4">
-            {["Terms", "Privacy", "Cookies", "FAQ"].map((item, i) => (
-              <a 
+            {[
+              { name: "Terms", path: "/terms" },
+              { name: "Privacy", path: "/privacy" },
+              { name: "Cookies", path: "/cookies" },
+              { name: "FAQ", path: "/faq" }
+            ].map((item, i) => (
+              <Link
                 key={i}
-                href="#" 
+                to={item.path}
                 className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
-                {item}
-              </a>
+                {item.name}
+              </Link>
             ))}
           </div>
         </div>
