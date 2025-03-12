@@ -4,11 +4,13 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MenuIcon, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,14 +22,32 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleSectionClick = (sectionId: string) => {
+    const handleScroll = () => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    if (location.pathname !== '/') {
+      navigate('/', { replace: true });
+      // Wait for navigation to complete before scrolling
+      setTimeout(handleScroll, 100);
+    } else {
+      handleScroll();
+    }
+    closeMenu();
+  };
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
   const links = [
     { name: "Home", href: "/" },
-    { name: "Features", href: "#features" },
-    { name: "About", href: "#about" },
-    { name: "Join", href: "#signup" }
+    { name: "Features", action: () => handleSectionClick('features') },
+    { name: "About", action: () => handleSectionClick('about') },
+    { name: "Join", action: () => handleSectionClick('signup') }
   ];
 
   return (
@@ -58,13 +78,24 @@ const Navbar = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
           {links.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="font-medium text-sm text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-white transition-colors duration-200"
-            >
-              {link.name}
-            </a>
+            link.href ? (
+              <Link
+                key={link.name}
+                to={link.href}
+                className="font-medium text-sm text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-white transition-colors duration-200"
+                onClick={closeMenu}
+              >
+                {link.name}
+              </Link>
+            ) : (
+              <button
+                key={link.name}
+                onClick={link.action}
+                className="font-medium text-sm text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-white transition-colors duration-200"
+              >
+                {link.name}
+              </button>
+            )
           ))}
           <Button className="font-medium">Get Started</Button>
         </nav>
@@ -100,14 +131,24 @@ const Navbar = () => {
           </div>
           <nav className="flex flex-col space-y-8">
             {links.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-xl font-medium text-gray-900 dark:text-gray-100"
-                onClick={closeMenu}
-              >
-                {link.name}
-              </a>
+              link.href ? (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  className="text-xl font-medium text-gray-900 dark:text-gray-100"
+                  onClick={closeMenu}
+                >
+                  {link.name}
+                </Link>
+              ) : (
+                <button
+                  key={link.name}
+                  onClick={link.action}
+                  className="text-xl font-medium text-gray-900 dark:text-gray-100 text-left"
+                >
+                  {link.name}
+                </button>
+              )
             ))}
             <Button className="w-full" onClick={closeMenu}>
               Get Started
