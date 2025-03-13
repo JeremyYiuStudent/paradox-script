@@ -84,9 +84,17 @@ const server = createServer(async (req, res) => {
 const PORT = process.env.PORT || 3001;
 
 export const startServer = () => {
-  server.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-  });
+  // Only start the server in a browser environment if we're in development
+  // This prevents attempt to start server during Netlify build process
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    server.listen(PORT, () => {
+      console.log(`Server running at http://localhost:${PORT}`);
+    });
+    return server;
+  }
   
-  return server;
+  // Return a mock server object for Netlify builds
+  return {
+    close: () => console.log('Mock server closed')
+  };
 };

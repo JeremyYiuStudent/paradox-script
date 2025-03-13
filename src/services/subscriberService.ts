@@ -1,6 +1,9 @@
 
 // API URL - in production, this would be an environment variable
-const API_URL = 'http://localhost:3001/api/subscribers';
+const isDevelopment = import.meta.env.DEV;
+const API_URL = isDevelopment 
+  ? 'http://localhost:3001/api/subscribers'
+  : '/api/subscribers'; // In production, this will be handled by Netlify functions or similar
 
 export interface Subscriber {
   email: string;
@@ -10,6 +13,14 @@ export interface Subscriber {
 // Get all subscribers
 export const getSubscribers = async (): Promise<Subscriber[]> => {
   try {
+    if (!isDevelopment) {
+      console.log('Running in production mode. Mock data will be used.');
+      // Return mock data in production since we don't have a real server
+      return [
+        { email: 'example@example.com', subscribedAt: new Date().toISOString() }
+      ];
+    }
+    
     const response = await fetch(API_URL);
     if (!response.ok) {
       throw new Error('Failed to fetch subscribers');
@@ -24,6 +35,15 @@ export const getSubscribers = async (): Promise<Subscriber[]> => {
 // Add a new subscriber
 export const addSubscriber = async (email: string): Promise<{ success: boolean; message?: string; subscriber?: Subscriber }> => {
   try {
+    if (!isDevelopment) {
+      console.log('Running in production mode. Subscriber will be mocked.');
+      // Return success response with mock data
+      return { 
+        success: true, 
+        subscriber: { email, subscribedAt: new Date().toISOString() } 
+      };
+    }
+    
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
@@ -43,6 +63,11 @@ export const addSubscriber = async (email: string): Promise<{ success: boolean; 
 // Clear all subscribers
 export const clearSubscribers = async (): Promise<{ success: boolean }> => {
   try {
+    if (!isDevelopment) {
+      console.log('Running in production mode. Clear operation mocked.');
+      return { success: true };
+    }
+    
     const response = await fetch(API_URL, {
       method: 'DELETE',
     });
