@@ -23,6 +23,7 @@ const Footer = () => {
               Empowering writers to create interactive multiplayer narratives without code.
               Join our community and bring your stories to life.
             </p>
+            {/*
             <div className="flex space-x-4">
               {[
                 { icon: <Twitter className="h-5 w-5" />, label: "Twitter", url: "https://twitter.com" },
@@ -42,6 +43,7 @@ const Footer = () => {
                 </a>
               ))}
             </div>
+            */}
           </div>
           
           {/* Links */}
