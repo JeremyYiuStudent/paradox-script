@@ -21,7 +21,8 @@ export const getSubscribers = async (): Promise<Subscriber[]> => {
     }
     
     // In development, use the local API endpoint
-    const response = await fetch('http://localhost:3001/api/subscribers');
+    // Use relative URL to automatically adapt to HTTP/HTTPS
+    const response = await fetch('/api/subscribers');
     if (!response.ok) {
       throw new Error('Failed to fetch subscribers');
     }
@@ -47,7 +48,8 @@ export const addSubscriber = async (email: string): Promise<{ success: boolean; 
       };
     }
     
-    const response = await fetch('http://localhost:3001/api/subscribers', {
+    // Use relative URL to automatically adapt to HTTP/HTTPS
+    const response = await fetch('/api/subscribers', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -71,7 +73,8 @@ export const clearSubscribers = async (): Promise<{ success: boolean }> => {
       return { success: true };
     }
     
-    const response = await fetch('http://localhost:3001/api/subscribers', {
+    // Use relative URL to automatically adapt to HTTP/HTTPS
+    const response = await fetch('/api/subscribers', {
       method: 'DELETE',
     });
     
