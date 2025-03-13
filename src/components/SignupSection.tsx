@@ -1,32 +1,97 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowRight, Mail, CheckCircle, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
 
+// Create a type for our subscribers
+interface Subscriber {
+  email: string;
+  subscribedAt: string;
+}
+
 const SignupSection = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const { toast } = useToast();
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+
+  // Load existing subscribers from local storage on component mount
+  useEffect(() => {
+    const storedSubscribers = localStorage.getItem('newsletter_subscribers');
+    if (storedSubscribers) {
+      setSubscribers(JSON.parse(storedSubscribers));
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Basic email validation
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+
+    // Check if email is already subscribed
+    if (subscribers.some(sub => sub.email === email)) {
+      toast({
+        title: "Already subscribed",
+        description: "This email is already on our mailing list.",
+        duration: 3000,
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     
-    // Simulate API call
+    // Simulate API call with timeout
     setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubscribed(true);
-      setEmail('');
-      
-      toast({
-        title: "Subscription successful!",
-        description: "Thank you for joining our mailing list.",
-        duration: 5000,
-      });
+      try {
+        // Create new subscriber object
+        const newSubscriber: Subscriber = {
+          email,
+          subscribedAt: new Date().toISOString(),
+        };
+        
+        // Add to subscribers list
+        const updatedSubscribers = [...subscribers, newSubscriber];
+        
+        // Save to localStorage
+        localStorage.setItem('newsletter_subscribers', JSON.stringify(updatedSubscribers));
+        
+        // Update state
+        setSubscribers(updatedSubscribers);
+        setIsSubmitting(false);
+        setIsSubscribed(true);
+        setEmail('');
+        
+        console.log('New subscriber:', newSubscriber);
+        console.log('Total subscribers:', updatedSubscribers.length);
+        
+        toast({
+          title: "Subscription successful!",
+          description: "Thank you for joining our mailing list.",
+          duration: 5000,
+        });
+      } catch (error) {
+        console.error('Subscription error:', error);
+        toast({
+          title: "Subscription failed",
+          description: "There was an error saving your subscription. Please try again.",
+          variant: "destructive",
+          duration: 5000,
+        });
+        setIsSubmitting(false);
+      }
     }, 1500);
   };
 
@@ -109,6 +174,15 @@ const SignupSection = () => {
                 We respect your privacy and will never share your information.
               </p>
             </form>
+
+            {/* Display total subscriber count for demonstration */}
+            {subscribers.length > 0 && (
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                  <span className="font-medium">{subscribers.length}</span> subscriber{subscribers.length !== 1 ? 's' : ''} in our community
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Discord QR code */}
