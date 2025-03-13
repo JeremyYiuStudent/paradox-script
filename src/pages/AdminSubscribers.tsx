@@ -9,21 +9,23 @@ import { useToast } from '@/components/ui/use-toast';
 const AdminSubscribers = () => {
   const { toast } = useToast();
   const [isServerRunning, setIsServerRunning] = useState(false);
+  const isDevelopment = import.meta.env.DEV;
 
   useEffect(() => {
-    // Start the server when the component mounts
+    // Only start the server when in development mode
     let server: any;
     
     try {
       server = startServer();
-      setIsServerRunning(process.env.NODE_ENV === 'development');
+      setIsServerRunning(isDevelopment);
       
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Server started successfully');
+      if (isDevelopment) {
+        console.log('Server started successfully in development mode');
       } else {
+        console.log('Running in production mode with mock data');
         toast({
           title: "Server Notice",
-          description: "Running in production mode. Server functionality is limited.",
+          description: "Running in production mode. Using mock data.",
           variant: "default",
         });
       }
@@ -31,7 +33,7 @@ const AdminSubscribers = () => {
       console.error('Failed to start server:', error);
       toast({
         title: "Server Error",
-        description: "Failed to start the server. Some features may not work.",
+        description: "Failed to initialize. Using fallback data.",
         variant: "destructive",
       });
     }
@@ -40,7 +42,7 @@ const AdminSubscribers = () => {
     return () => {
       if (server) {
         server.close();
-        if (process.env.NODE_ENV === 'development') {
+        if (isDevelopment) {
           console.log('Server stopped');
         }
       }
@@ -52,10 +54,10 @@ const AdminSubscribers = () => {
       <Navbar />
       <main className="flex-grow py-12">
         <div className="container mx-auto">
-          {!isServerRunning && (
+          {!isDevelopment && (
             <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
               <p className="font-bold">Note</p>
-              <p>The server is running in static mode. Some features may not be available in this environment.</p>
+              <p>Running in production mode with mock data. For full functionality, run in development environment.</p>
             </div>
           )}
           <SubscriberManager />

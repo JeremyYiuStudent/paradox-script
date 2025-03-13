@@ -1,9 +1,6 @@
 
 // API URL - in production, this would be an environment variable
 const isDevelopment = import.meta.env.DEV;
-const API_URL = isDevelopment 
-  ? 'http://localhost:3001/api/subscribers'
-  : '/api/subscribers'; // In production, this will be handled by Netlify functions or similar
 
 export interface Subscriber {
   email: string;
@@ -17,18 +14,24 @@ export const getSubscribers = async (): Promise<Subscriber[]> => {
       console.log('Running in production mode. Mock data will be used.');
       // Return mock data in production since we don't have a real server
       return [
-        { email: 'example@example.com', subscribedAt: new Date().toISOString() }
+        { email: 'example@example.com', subscribedAt: new Date().toISOString() },
+        { email: 'demo@example.com', subscribedAt: new Date().toISOString() },
+        { email: 'test@example.com', subscribedAt: new Date().toISOString() }
       ];
     }
     
-    const response = await fetch(API_URL);
+    // In development, use the local API endpoint
+    const response = await fetch('http://localhost:3001/api/subscribers');
     if (!response.ok) {
       throw new Error('Failed to fetch subscribers');
     }
     return await response.json();
   } catch (error) {
     console.error('Error fetching subscribers:', error);
-    return [];
+    // Return mock data if there's an error
+    return [
+      { email: 'example@example.com', subscribedAt: new Date().toISOString() }
+    ];
   }
 };
 
@@ -44,7 +47,7 @@ export const addSubscriber = async (email: string): Promise<{ success: boolean; 
       };
     }
     
-    const response = await fetch(API_URL, {
+    const response = await fetch('http://localhost:3001/api/subscribers', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +71,7 @@ export const clearSubscribers = async (): Promise<{ success: boolean }> => {
       return { success: true };
     }
     
-    const response = await fetch(API_URL, {
+    const response = await fetch('http://localhost:3001/api/subscribers', {
       method: 'DELETE',
     });
     

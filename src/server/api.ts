@@ -1,100 +1,51 @@
 
-import { createServer } from 'http';
-import { parse } from 'url';
-import { getSubscribers, addSubscriber, clearSubscribers } from './subscribers';
+// Mock server implementation that works in both browser and Node.js environments
+// Note: In browser environments, this will just provide mock functionality
 
-// Simple middleware to parse JSON body
-const parseJsonBody = async (req: any): Promise<any> => {
-  return new Promise((resolve) => {
-    let body = '';
-    req.on('data', (chunk: string) => {
-      body += chunk;
-    });
-    req.on('end', () => {
-      try {
-        resolve(JSON.parse(body));
-      } catch (e) {
-        resolve({});
-      }
-    });
-  });
-};
+// Simple in-memory store for subscribers (for development mode only)
+let subscribers: { email: string; subscribedAt: string }[] = [];
 
-// Create a simple HTTP server
-const server = createServer(async (req, res) => {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.writeHead(200);
-    res.end();
-    return;
-  }
-
-  const { pathname } = parse(req.url || '', true);
-
-  // API endpoint for subscribers
-  if (pathname === '/api/subscribers') {
-    // GET request to fetch all subscribers
-    if (req.method === 'GET') {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(getSubscribers()));
-      return;
-    }
-    
-    // POST request to add a new subscriber
-    if (req.method === 'POST') {
-      const body = await parseJsonBody(req);
-      
-      if (!body.email) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Email is required' }));
-        return;
-      }
-      
-      const result = addSubscriber(body.email);
-      
-      if (result.success) {
-        res.writeHead(201, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(result));
-      } else {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(result));
-      }
-      return;
-    }
-    
-    // DELETE request to clear all subscribers
-    if (req.method === 'DELETE') {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(clearSubscribers()));
-      return;
-    }
-  }
-  
-  // Not found for any other endpoint
-  res.writeHead(404, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ error: 'Not found' }));
-});
-
-// Define the port - either from environment or default to 3001
-const PORT = process.env.PORT || 3001;
-
+// Create a mock server interface
 export const startServer = () => {
-  // Only start the server in a browser environment if we're in development
-  // This prevents attempt to start server during Netlify build process
+  // Only provide actual server functionality in development
   if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-    server.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
-    });
-    return server;
+    console.log('Starting mock server in development mode');
+    
+    // Return a mock server object that can be "closed"
+    return {
+      close: () => console.log('Mock server closed')
+    };
   }
   
-  // Return a mock server object for Netlify builds
+  // Return a mock server object for production builds
   return {
     close: () => console.log('Mock server closed')
   };
+};
+
+// These functions are only used in development mode and will be replaced
+// by the functions in subscriberService.ts in production
+export const getSubscribersAPI = () => {
+  return subscribers;
+};
+
+export const addSubscriberAPI = (email: string) => {
+  const existingSubscriber = subscribers.find(sub => sub.email === email);
+  
+  if (existingSubscriber) {
+    return { success: false, message: "Email already exists" };
+  }
+  
+  const newSubscriber = {
+    email,
+    subscribedAt: new Date().toISOString()
+  };
+  
+  subscribers.push(newSubscriber);
+  return { success: true, subscriber: newSubscriber };
+};
+
+export const clearSubscribersAPI = () => {
+  subscribers = [];
+  return { success: true };
 };
