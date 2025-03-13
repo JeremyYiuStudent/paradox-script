@@ -1,36 +1,37 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowRight, Mail, CheckCircle, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
-
-// Create a type for our subscribers
-interface Subscriber {
-  email: string;
-  subscribedAt: string;
-}
+import { addSubscriber } from '@/services/subscriberService';
 
 const SignupSection = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subscriberCount, setSubscriberCount] = useState(0);
   const { toast } = useToast();
-  const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
 
-  // Load existing subscribers from local storage on component mount
   useEffect(() => {
-    const storedSubscribers = localStorage.getItem('newsletter_subscribers');
-    if (storedSubscribers) {
-      setSubscribers(JSON.parse(storedSubscribers));
-    }
+    const fetchSubscriberCount = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/subscribers');
+        if (response.ok) {
+          const subscribers = await response.json();
+          setSubscriberCount(subscribers.length);
+        }
+      } catch (error) {
+        console.error('Error fetching subscriber count:', error);
+      }
+    };
+
+    fetchSubscriberCount();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic email validation
     if (!email || !email.includes('@') || !email.includes('.')) {
       toast({
         title: "Invalid email",
@@ -41,63 +42,45 @@ const SignupSection = () => {
       return;
     }
 
-    // Check if email is already subscribed
-    if (subscribers.some(sub => sub.email === email)) {
-      toast({
-        title: "Already subscribed",
-        description: "This email is already on our mailing list.",
-        duration: 3000,
-      });
-      return;
-    }
-
     setIsSubmitting(true);
     
-    // Simulate API call with timeout
-    setTimeout(() => {
-      try {
-        // Create new subscriber object
-        const newSubscriber: Subscriber = {
-          email,
-          subscribedAt: new Date().toISOString(),
-        };
-        
-        // Add to subscribers list
-        const updatedSubscribers = [...subscribers, newSubscriber];
-        
-        // Save to localStorage
-        localStorage.setItem('newsletter_subscribers', JSON.stringify(updatedSubscribers));
-        
-        // Update state
-        setSubscribers(updatedSubscribers);
+    try {
+      const result = await addSubscriber(email);
+      
+      if (result.success) {
         setIsSubmitting(false);
         setIsSubscribed(true);
         setEmail('');
-        
-        console.log('New subscriber:', newSubscriber);
-        console.log('Total subscribers:', updatedSubscribers.length);
+        setSubscriberCount(prev => prev + 1);
         
         toast({
           title: "Subscription successful!",
           description: "Thank you for joining our mailing list.",
           duration: 5000,
         });
-      } catch (error) {
-        console.error('Subscription error:', error);
+      } else {
         toast({
           title: "Subscription failed",
-          description: "There was an error saving your subscription. Please try again.",
+          description: result.message || "There was an error saving your subscription. Please try again.",
           variant: "destructive",
-          duration: 5000,
+          duration: 3000,
         });
         setIsSubmitting(false);
       }
-    }, 1500);
+    } catch (error) {
+      console.error('Subscription error:', error);
+      toast({
+        title: "Subscription failed",
+        description: "There was an error connecting to the server. Please try again.",
+        variant: "destructive",
+        duration: 5000,
+      });
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <section id="signup" className="py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute right-1/4 bottom-0 -z-10 transform-gpu blur-3xl">
           <div
@@ -119,7 +102,6 @@ const SignupSection = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 justify-center items-stretch">
-          {/* Email signup */}
           <div className="glass dark:glass-dark rounded-3xl p-8 md:p-10 shadow-xl flex-1">
             <div className="mb-6">
               <h4 className="text-xl font-semibold mb-2">Newsletter Updates</h4>
@@ -175,17 +157,15 @@ const SignupSection = () => {
               </p>
             </form>
 
-            {/* Display total subscriber count for demonstration */}
-            {subscribers.length > 0 && (
+            {subscriberCount > 0 && (
               <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                  <span className="font-medium">{subscribers.length}</span> subscriber{subscribers.length !== 1 ? 's' : ''} in our community
+                  <span className="font-medium">{subscriberCount}</span> subscriber{subscriberCount !== 1 ? 's' : ''} in our community
                 </p>
               </div>
             )}
           </div>
 
-          {/* Discord QR code */}
           <div className="glass dark:glass-dark rounded-3xl p-8 md:p-10 shadow-xl flex-1 flex flex-col justify-between">
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-2">

@@ -4,34 +4,34 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { useToast } from '@/components/ui/use-toast';
-
-interface Subscriber {
-  email: string;
-  subscribedAt: string;
-}
+import { getSubscribers, clearSubscribers, Subscriber } from '@/services/subscriberService';
 
 const SubscriberManager = () => {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  // Load subscribers from localStorage on component mount
+  // Load subscribers from API on component mount
   useEffect(() => {
+    fetchSubscribers();
+  }, []);
+
+  const fetchSubscribers = async () => {
     try {
-      const storedData = localStorage.getItem('newsletter_subscribers');
-      const parsedData = storedData ? JSON.parse(storedData) : [];
-      setSubscribers(parsedData);
+      setIsLoading(true);
+      const data = await getSubscribers();
+      setSubscribers(data);
     } catch (error) {
       console.error('Error loading subscribers:', error);
       toast({
         title: 'Error',
-        description: 'Failed to load subscriber data',
+        description: 'Failed to load subscriber data from server',
         variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  };
 
   // Export subscribers to CSV file
   const exportToCSV = () => {
@@ -69,15 +69,28 @@ const SubscriberManager = () => {
     }
   };
 
-  // Clear all subscribers (for testing/development)
-  const clearSubscribers = () => {
+  // Clear all subscribers
+  const handleClearSubscribers = async () => {
     if (window.confirm('Are you sure you want to delete all subscribers? This cannot be undone.')) {
-      localStorage.removeItem('newsletter_subscribers');
-      setSubscribers([]);
-      toast({
-        title: 'Subscribers Cleared',
-        description: 'All subscriber data has been removed',
-      });
+      try {
+        const result = await clearSubscribers();
+        if (result.success) {
+          setSubscribers([]);
+          toast({
+            title: 'Subscribers Cleared',
+            description: 'All subscriber data has been removed',
+          });
+        } else {
+          throw new Error('Failed to clear subscribers');
+        }
+      } catch (error) {
+        console.error('Error clearing subscribers:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to clear subscribers from server',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
@@ -91,12 +104,15 @@ const SubscriberManager = () => {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Newsletter Subscribers</h1>
         <div className="flex gap-4">
+          <Button onClick={fetchSubscribers} className="mr-2">
+            Refresh
+          </Button>
           <Button onClick={exportToCSV} disabled={subscribers.length === 0 || isLoading}>
             Export to CSV
           </Button>
           <Button 
             variant="destructive" 
-            onClick={clearSubscribers} 
+            onClick={handleClearSubscribers} 
             disabled={subscribers.length === 0 || isLoading}
           >
             Clear All
