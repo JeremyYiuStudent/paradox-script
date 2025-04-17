@@ -1,11 +1,32 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Terms = () => {
+  const [termsContent, setTermsContent] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   useEffect(() => {
-    document.title = 'Terms of Service | Paradox Script';
+    // Use the correct path to the HTML file
+    fetch('/src/components/TermsOfUse.html')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load content: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then(html => {
+        setTermsContent(html);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading Terms of Use content:', error);
+        setError('Unable to load Terms of Use content. Please try again later.');
+        setIsLoading(false);
+      });
   }, []);
 
   return (
@@ -15,44 +36,25 @@ const Terms = () => {
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
           
-          <div className="prose prose-lg dark:prose-invert max-w-none">
-            <p className="lead">Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-            
-            <h2>1. Introduction</h2>
-            <p>Welcome to Paradox Script. These Terms of Service govern your use of our website and services. By accessing or using Paradox Script, you agree to be bound by these Terms.</p>
-            
-            <h2>2. Definitions</h2>
-            <p>"Service" refers to the Paradox Script platform, applications, and tools.</p>
-            <p>"User," "you," and "your" refer to individuals who access or use the Service.</p>
-            <p>"Content" refers to all text, images, audio, video, or other material submitted to or accessible through the Service.</p>
-            
-            <h2>3. Account Registration</h2>
-            <p>You may be required to create an account to access certain features of our Service. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
-            
-            <h2>4. User Content</h2>
-            <p>You retain ownership of any intellectual property rights you hold in the Content you create using our Service. By submitting Content, you grant us a worldwide, non-exclusive, royalty-free license to use, reproduce, modify, adapt, publish, translate, and distribute it.</p>
-            
-            <h2>5. Acceptable Use</h2>
-            <p>You agree not to use the Service for any unlawful purpose or in any way that could damage, disable, or impair the Service. You will not attempt to gain unauthorized access to any part of the Service.</p>
-            
-            <h2>6. Termination</h2>
-            <p>We reserve the right to suspend or terminate your access to the Service at any time for any reason without notice.</p>
-            
-            <h2>7. Disclaimer of Warranties</h2>
-            <p>The Service is provided "as is" without warranties of any kind, either express or implied.</p>
-            
-            <h2>8. Limitation of Liability</h2>
-            <p>In no event shall Paradox Script be liable for any indirect, incidental, special, consequential, or punitive damages.</p>
-            
-            <h2>9. Changes to Terms</h2>
-            <p>We reserve the right to modify these Terms at any time. Your continued use of the Service after any such changes constitutes your acceptance of the new Terms.</p>
-            
-            <h2>10. Governing Law</h2>
-            <p>These Terms shall be governed by the laws of the State of California without regard to its conflict of law provisions.</p>
-            
-            <h2>11. Contact Information</h2>
-            <p>For any questions about these Terms, please contact us at legal@paradoxscript.com.</p>
-          </div>
+          {isLoading ? (
+            <div className="space-y-4">
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-5/6" />
+              <Skeleton className="h-8 w-4/6" />
+              <Skeleton className="h-[600px] w-full" />
+            </div>
+          ) : error ? (
+            <div className="p-4 border border-red-300 bg-red-50 text-red-700 rounded-md">
+              {error}
+            </div>
+          ) : (
+            <iframe 
+              srcDoc={termsContent}
+              className="w-full min-h-[800px] border-0"
+              title="Terms of Service"
+              sandbox="allow-same-origin allow-scripts"
+            />
+          )}
         </div>
       </main>
       <Footer />
