@@ -20,5 +20,4 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  assetsInclude: ['**/*.html'], // Treat HTML files as assets instead of trying to parse them
 }));
